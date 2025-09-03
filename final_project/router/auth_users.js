@@ -42,17 +42,14 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 
   let book = books[isbn];
 
-  if (!isValid(username)) return res.status(403).json({ message: `User ${users.map(user => user.username).join(",")} not authenticated` });
+  if (!isValid(username)) return res.status(403).json({ message: `User ${username} not authenticated` });
 
   if (!book) return res.status(404).json({ message: `Book with ISBN: ${isbn} not found.` });
 
   if (!username || !review) return res.status(403).json({ message: "Username or review can't be empty." });
 
-  // let isUserAlreadyReviewed = Object.keys(book.reviews).find(key => key === username);
-  // if (isUserAlreadyReviewed) 
   book.reviews[username] = review;
   res.status(200).json({ message: `The review for the book with ISBN: ${isbn} has been added/updated.` });
-  // else book.reviews.push({ [username]: review });
 });
 
 regd_users.delete("/auth/review/:isbn", (req, res) => {
@@ -61,8 +58,8 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
 
   let book = books[isbn];
 
-  if (!isValid(username)) return res.status(403).json({ message: `User ${users.map(user => user.username).join(",")} not authenticated` });
-  if(!book) return res.status(404).json({ message: `Book with ISBN: ${isbn} not found.` });
+  if (!isValid(username)) return res.status(403).json({ message: `User ${username} not authenticated` });
+  if (!book) return res.status(404).json({ message: `Book with ISBN: ${isbn} not found.` });
   if (!book.reviews[username]) return res.status(404).json({ message: `Review by user: ${username} for book with ISBN: ${isbn} not found.` });
 
   delete book.reviews[username];

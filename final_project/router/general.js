@@ -19,31 +19,33 @@ public_users.post("/register", (req, res) => {
   if (user) res.status(403).json({ message: "User already existed." });
   else {
     users.push({ username: username, password: password });
-    res.status(200).json({message: `User: ${username} is added.`});
+    res.status(200).json({ message: `User: ${username} is added.` });
   }
 });
 
 // Get the book list available in the shop
-public_users.get('/', function (req, res) {
-  res.send(JSON.stringify(books), null, 4);
+public_users.get('/', async function (req, res) {
+  let result = await JSON.stringify(books, null, 4);
+  res.send(result);
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn', function (req, res) {
+public_users.get('/isbn/:isbn', async function (req, res) {
   const isbn = req.params.isbn;
 
-  let filtered_book = books[isbn];
+  let filtered_book = await books[isbn];
+  let result = JSON.stringify(filtered_book, null, 4);
 
-  if (filtered_book) res.send(JSON.stringify(filtered_book, null, 4));
+  if (filtered_book) res.send(result);
   else res.status(404).json({ message: `Book with ISBN: ${isbn} not found.` });
 });
 
 // Get book details based on author
-public_users.get('/author/:author', function (req, res) {
+public_users.get('/author/:author', async function (req, res) {
   const author = req.params.author.toLowerCase();
 
   let filtered_book = [];
-  Object.keys(books).forEach(key => {
+  await Object.keys(books).forEach(key => {
     if (books[key].author.toLowerCase().includes(author))
       filtered_book.push(books[key]);
   });
@@ -56,11 +58,11 @@ public_users.get('/author/:author', function (req, res) {
 });
 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
+public_users.get('/title/:title', async function (req, res) {
   const title = req.params.title.toLowerCase();
 
   let filtered_book = [];
-  Object.values(books).forEach(book => {
+  await Object.values(books).forEach(book => {
     if (book.title.toLowerCase().includes(title))
       filtered_book.push(book);
   });
